@@ -371,29 +371,6 @@ $(function() {
 
   }
   
-  
-  // adjustments according to current condition
-  function adjust_to_condition() {
-
-    // the number of likes a person receives depends on the condition
-	// in addition, the number of likes another person receives is adjusted, so that there is the same number of likes overall
-	switch(condition) {
-		case 1:
-			window.settings.condition_likes = settings.condition_1_likes;
-			window.others.posts[1].likes = settings.condition_1_adjusted_likes;
-			break;
-		case 2:
-			window.settings.condition_likes = settings.condition_2_likes;
-			window.others.posts[1].likes = settings.condition_2_adjusted_likes;
-			break;
-		case 3:
-			window.settings.condition_likes = settings.condition_3_likes;
-			window.others.posts[1].likes = settings.condition_3_adjusted_likes;
-			break;
-	}	
-	  
-  }
-  
 
   // The variable QueryString contains the url parameters, i.e. condition no. and participant no.
   // via http://stackoverflow.com/a/979995
