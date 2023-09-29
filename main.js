@@ -334,21 +334,6 @@ $(function() {
     },window.settings.tasklength); // timing for task
   }
 
-  // Sets redirect link for string query, MUST ENCODE REDIRECT LINK
-  function get_params() {
-    if(window.QueryString.redirect !== undefined && window.QueryString.redirect !== "") {
-      window.redirect = decode(window.QueryString.redirect);
-    } else {
-      window.redirect = window.settings.defaultredirect;
-    }
-
-    var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
-
-    if(!urlHasQuestionMark) {
-      window.redirect = window.redirect+"?redir=1";
-    }
-  }
-
 	// Get URL parameters to set condition number and participant number
   function get_params() {
     // condition number must be 1, 2, or 3
