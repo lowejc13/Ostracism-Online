@@ -330,7 +330,7 @@ $(function() {
       $('#timer').text('00:00');
       //$('#final-continue').on('click', function() {
         // Redirect link
-        //location.href = window.redirect+'&a='+window.participant+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change p->a, c->b, u ->c, av->d, d->e
+        //windows.location.href = https://tamu.qualtrics.com/jfe/form/SV_2focCF62amXCLX0+'&a='+window.participant+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change p->a, c->b, u ->c, av->d, d->e
       //});
     },window.settings.tasklength); // timing for task
   }
