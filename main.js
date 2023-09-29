@@ -4,8 +4,10 @@
 // The following parameters are necessary to adjust: number of avatar images, and the redirect link at the end of the study. All other parameters have a default option and adjustments are optional.
 
 $(function() {
+	
   // **Parameters**
   // ------------
+	
   function set_settings() {
     window.settings = [];
 
@@ -321,3 +323,175 @@ $(function() {
       columnWidth : 10
     });
 
+	    // Redirect, default after 180000ms = 180s = 3min
+    setTimeout(function() {
+    
+    $(window).unbind('beforeunload');
+    
+    $('#final-continue').show();
+
+    $('#timer').text('00:00');
+    
+    $('#final-continue').on('click', function() {
+
+      // Redirect link
+      location.href = window.redirect+'&p='+window.participant+'&c='+window.condition+'&u='+encodeURI(window.username)+'&av='+window.avatarexport+'&d='+encodeURI(window.description);
+
+    });
+    
+    },window.settings.tasklength); // timing for task
+
+  }
+	
+
+  // Get URL parameters to set condition number and participant number
+  function get_params() {
+    // condition number must be 1, 2, or 3
+    if(window.QueryString.c !== undefined && !isNaN(parseInt(window.QueryString.c)) && parseInt(window.QueryString.c) > 0 && parseInt(window.QueryString.c) < 4) {
+      window.condition = parseInt(window.QueryString.c);
+    } else {
+      window.condition = 1; // condition defaults to 1
+    }
+    // participant number must be numeric
+    if(window.QueryString.p !== undefined && !isNaN(parseInt(window.QueryString.p))) {
+      window.participant = parseInt(window.QueryString.p);
+    } else {
+      window.participant = 0; // participant defaults to 0
+    }    
+    // redirect
+    if(window.QueryString.redirect !== undefined && window.QueryString.redirect !== "") {
+      window.redirect = decode(window.QueryString.redirect);
+    } else {
+	  window.redirect = window.settings.defaultredirect;
+	}
+	
+	var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
+	if(!urlHasQuestionMark) {
+		window.redirect = window.redirect+"?redir=1";
+	}
+	//alert(window.redirect);
+
+  }
+  
+  
+  // adjustments according to current condition
+  function adjust_to_condition() {
+
+    // the number of likes a person receives depends on the condition
+	// in addition, the number of likes another person receives is adjusted, so that there is the same number of likes overall
+	switch(condition) {
+		case 1:
+			window.settings.condition_likes = settings.condition_1_likes;
+			window.others.posts[1].likes = settings.condition_1_adjusted_likes;
+			break;
+		case 2:
+			window.settings.condition_likes = settings.condition_2_likes;
+			window.others.posts[1].likes = settings.condition_2_adjusted_likes;
+			break;
+		case 3:
+			window.settings.condition_likes = settings.condition_3_likes;
+			window.others.posts[1].likes = settings.condition_3_adjusted_likes;
+			break;
+	}	
+	  
+  }
+  
+
+  // The variable QueryString contains the url parameters, i.e. condition no. and participant no.
+  // via http://stackoverflow.com/a/979995
+  window.QueryString = function () {
+    var query_string = {};
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+      var pair = vars[i].split("=");
+        // If first entry with this name
+      if (typeof query_string[pair[0]] === "undefined") {
+        query_string[pair[0]] = pair[1];
+        // If second entry with this name
+      } else if (typeof query_string[pair[0]] === "string") {
+        var arr = [ query_string[pair[0]], pair[1] ];
+        query_string[pair[0]] = arr;
+        // If third or later entry with this name
+      } else {
+        query_string[pair[0]].push(pair[1]);
+      }
+    } 
+      return query_string;
+  } ();
+
+
+  // Function to check letters and numbers
+  // via http://www.w3resource.com/javascript/form/letters-numbers-field.php
+  function not_alphanumeric(inputtxt) {
+    var letterNumber = /^[0-9a-zA-Z]+$/;
+    if(inputtxt.match(letterNumber)) {
+        return false;
+      } else { 
+        return true; 
+      }
+  }
+
+
+  // Function to add extra zeros infront of numbers (used for the countdown)
+  // via http://stackoverflow.com/a/6466243
+  function pad (str, max) {
+    return str.length < max ? pad("0" + str, max) : str;
+  }
+
+  // Function for encoding and decoding URLs
+  // via http://meyerweb.com/eric/tools/dencoder/
+  function encode(unencoded) {
+	return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22");	
+  }
+  function decode(encoded) {
+	return decodeURIComponent(encoded.replace(/\+/g,  " "));
+  }
+
+  
+  // Simple Countdown
+  // via http://davidwalsh.name/jquery-countdown-plugin
+  jQuery.fn.countDown = function(settings,to) {
+    settings = jQuery.extend({
+      startFontSize: "12px",
+      endFontSize: "12px",
+      duration: 1000,
+      startNumber: 10,
+      endNumber: 0,
+      callBack: function() { }
+    }, settings);
+    return this.each(function() {
+      if(!to && to != settings.endNumber) { to = settings.startNumber; }  
+      jQuery(this).children('.secs').text(to);
+      jQuery(this).animate({
+        fontSize: settings.endFontSize
+      }, settings.duration, "", function() {
+        if(to > settings.endNumber + 1) {
+          jQuery(this).children('.secs').text(to - 1);
+          jQuery(this).countDown(settings, to - 1);
+          var minutes = Math.floor(to / 60);
+          var seconds = to - minutes * 60;
+          jQuery(this).children('.cntr').text(pad(minutes.toString(),2) + ':' + pad(seconds.toString(),2));
+        }
+        else {
+          settings.callBack(this);
+        }
+      });
+    });
+  };
+
+  // Prevent that participants accidentally exit the experiment by disabling F5 and backspace keys
+  shortcut.add("f5",function() {});  
+  $(window).bind('beforeunload', function(){
+    return 'Are you sure you want to quit the experiment completely?';
+  });   
+
+  // Set Settings, get Participant No. and Condition No.
+  set_settings();
+  get_params();
+  adjust_to_condition();
+
+  // Start with the intro slide
+  init_intro();
+
+});
