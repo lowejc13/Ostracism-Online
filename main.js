@@ -18,7 +18,7 @@ $(function() {
 	  // After the introduction task is over participants should be redirected to a survey with manipulation checks and dependent measures, to subsequent tasks, or to further instructions.
 	  // If the study is called with a parameter for redirection, as explained in the documentation, this value is overwritten.
 	  // To the redirect link, the following information will be appended: (1) participant number, (2) condition, (3) username, (4) description submitted by participant. These variables can be extracted from the link, saved as data, and used for linking the Social Media Ostracism paradigm to subsequent tasks and measures. See documentation for more details.
-    settings.defaultredirect = 'https://tamu.qualtrics.com/jfe/form/SV_2focCF62amXCLX0';
+    settings.defaultredirect = 'https://tamu.qualtrics.com/jfe/form/SV_1zf8nQjNCCFJs6a';
 
 	  // **Tasklength**
     // Length of the group introduction task in milliseconds. Can be changed to any number (in ms). Default: 180000 (3min)
@@ -178,7 +178,6 @@ $(function() {
   //function DeactivateLike() {
 	  setTimeout(function() { 
       $('.btn-like').attr("disabled", true);
-	    alert("This part of the study has now ended. Please return to the survey tab in your browser.");
     }, 2000);
   }
   function DeactivateDisLike(){
@@ -322,126 +321,3 @@ $(function() {
       columnWidth : 10
     });
 
-    // Redirect, default after 180000ms = 180s = 3min
-    setTimeout(function() {
-
-      $(window).unbind('beforeunload');
-      //$('#final-continue').show();
-      $('#timer').text('00:00');
-      //$('#final-continue').on('click', function() {
-        // Redirect link
-        //windows.location.href = https://tamu.qualtrics.com/jfe/form/SV_2focCF62amXCLX0+'&a='+window.participant+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change p->a, c->b, u ->c, av->d, d->e
-      //});
-    },window.settings.tasklength); // timing for task
-  }
-
-  // Sets redirect link for string query, MUST ENCODE REDIRECT LINK
-  function get_params() {
-    if(window.QueryString.redirect !== undefined && window.QueryString.redirect !== "") {
-      window.redirect = decode(window.QueryString.redirect);
-    } else {
-      window.redirect = window.settings.defaultredirect;
-    }
-
-    var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
-
-    if(!urlHasQuestionMark) {
-      window.redirect = window.redirect+"?redir=1";
-    }
-  }
-
-  // The variable QueryString contains the url parameters, i.e. condition no. and participant no.
-  // via http://stackoverflow.com/a/979995
-  window.QueryString = function () {
-    var query_string = {};
-    var query = window.location.search.substring(1);
-    var vars = query.split("&");
-    for (var i=0;i<vars.length;i++) {
-      var pair = vars[i].split("=");
-        // If first entry with this name
-      if (typeof query_string[pair[0]] === "undefined") {
-        query_string[pair[0]] = pair[1];
-        // If second entry with this name
-      } else if (typeof query_string[pair[0]] === "string") {
-        var arr = [ query_string[pair[0]], pair[1] ];
-        query_string[pair[0]] = arr;
-        // If third or later entry with this name
-      } else {
-        query_string[pair[0]].push(pair[1]);
-      }
-    }
-      return query_string;
-  } ();
-
-
-  // Function to check letters and numbers
-  // via http://www.w3resource.com/javascript/form/letters-numbers-field.php
-  function not_alphanumeric(inputtxt) {
-    var letterNumber = /^[0-9a-zA-Z]+$/;
-    if(inputtxt.match(letterNumber)) {
-        return false;
-      } else {
-        return true;
-      }
-  }
-
-  // Function to add extra zeros infront of numbers (used for the countdown)
-  // via http://stackoverflow.com/a/6466243
-  function pad (str, max) {
-      return str.length < max ? pad("0" + str, max) : str;
-  }
-
-  // Function for encoding and decoding URLs
-  // via http://meyerweb.com/eric/tools/dencoder/
-  function encode(unencoded) {
-    return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22");
-  }
-  function decode(encoded) {
-    return decodeURIComponent(encoded.replace(/\+/g,  " "));
-  }
-
-
-  // Simple Countdown
-  // via http://davidwalsh.name/jquery-countdown-plugin
-  jQuery.fn.countDown = function(settings,to) {
-    settings = jQuery.extend({
-      startFontSize: "12px",
-      endFontSize: "12px",
-      duration: 1000,
-      startNumber: 10,
-      endNumber: 0,
-      callBack: function() { }
-    }, settings);
-    return this.each(function() {
-      if(!to && to != settings.endNumber) { to = settings.startNumber; }
-      jQuery(this).children('.secs').text(to);
-      jQuery(this).animate({
-        fontSize: settings.endFontSize
-      }, settings.duration, "", function() {
-        if(to > settings.endNumber + 1) {
-          jQuery(this).children('.secs').text(to - 1);
-          jQuery(this).countDown(settings, to - 1);
-          var minutes = Math.floor(to / 60);
-          var seconds = to - minutes * 60;
-          jQuery(this).children('.cntr').text(pad(minutes.toString(),2) + ':' + pad(seconds.toString(),2));
-        }
-        else {
-          settings.callBack(this);
-        }
-      });
-    });
-  };
-
-  // Prevent that participants accidentally exit the experiment by disabling F5 and backspace keys
-  shortcut.add("f5",function() {});
-  $(window).bind('beforeunload', function() {
-    return 'Are you sure you want to quit the experiment completely?';
-  });
-
-  // Set Settings
-  set_settings();
-  get_params();
-
-  // Start with the intro slide
-  init_intro();
-});
