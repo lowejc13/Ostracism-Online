@@ -4,10 +4,8 @@
 // The following parameters are necessary to adjust: number of avatar images, and the redirect link at the end of the study. All other parameters have a default option and adjustments are optional.
 
 $(function() {
-	
   // **Parameters**
   // ------------
-	
   function set_settings() {
     window.settings = [];
 
@@ -20,7 +18,7 @@ $(function() {
 	  // After the introduction task is over participants should be redirected to a survey with manipulation checks and dependent measures, to subsequent tasks, or to further instructions.
 	  // If the study is called with a parameter for redirection, as explained in the documentation, this value is overwritten.
 	  // To the redirect link, the following information will be appended: (1) participant number, (2) condition, (3) username, (4) description submitted by participant. These variables can be extracted from the link, saved as data, and used for linking the Social Media Ostracism paradigm to subsequent tasks and measures. See documentation for more details.
-    settings.defaultredirect = 'https://tamu.qualtrics.com/jfe/form/SV_1zf8nQjNCCFJs6a';
+    settings.defaultredirect = 'https://msu.co1.qualtrics.com/jfe/form/SV_6yWfqs7ndfVR0mq';
 
 	  // **Tasklength**
     // Length of the group introduction task in milliseconds. Can be changed to any number (in ms). Default: 180000 (3min)
@@ -177,9 +175,10 @@ $(function() {
   }
 
   // Disables the like/dislike buttons and notifies the user that the time is up.
-  //function DeactivateLike() {
+  function DeactivateLike() {
 	  setTimeout(function() { 
       $('.btn-like').attr("disabled", true);
+	    alert("This part of the study has now ended. Please return to the survey tab in your browser.");
     }, 2000);
   }
   function DeactivateDisLike(){
@@ -323,79 +322,33 @@ $(function() {
       columnWidth : 10
     });
 
-	    // Redirect, default after 180000ms = 180s = 3min
+    // Redirect, default after 180000ms = 180s = 3min
     setTimeout(function() {
-    
-    $(window).unbind('beforeunload');
-    
-    $('#final-continue').show();
 
-    $('#timer').text('00:00');
-    
-    $('#final-continue').on('click', function() {
-
-      // Redirect link
-      location.href = window.redirect+'&p='+window.participant+'&c='+window.condition+'&u='+encodeURI(window.username)+'&av='+window.avatarexport+'&d='+encodeURI(window.description);
-
-    });
-    
+      $(window).unbind('beforeunload');
+      //$('#final-continue').show();
+      $('#timer').text('00:00');
+      //$('#final-continue').on('click', function() {
+        // Redirect link
+        //location.href = window.redirect+'&a='+window.participant+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change p->a, c->b, u ->c, av->d, d->e
+      //});
     },window.settings.tasklength); // timing for task
-
   }
-	
 
-  // Get URL parameters to set condition number and participant number
+  // Sets redirect link for string query, MUST ENCODE REDIRECT LINK
   function get_params() {
-    // condition number must be 1, 2, or 3
-    if(window.QueryString.c !== undefined && !isNaN(parseInt(window.QueryString.c)) && parseInt(window.QueryString.c) > 0 && parseInt(window.QueryString.c) < 4) {
-      window.condition = parseInt(window.QueryString.c);
-    } else {
-      window.condition = 1; // condition defaults to 1
-    }
-    // participant number must be numeric
-    if(window.QueryString.p !== undefined && !isNaN(parseInt(window.QueryString.p))) {
-      window.participant = parseInt(window.QueryString.p);
-    } else {
-      window.participant = 0; // participant defaults to 0
-    }    
-    // redirect
     if(window.QueryString.redirect !== undefined && window.QueryString.redirect !== "") {
       window.redirect = decode(window.QueryString.redirect);
     } else {
-	  window.redirect = window.settings.defaultredirect;
-	}
-	
-	var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
-	if(!urlHasQuestionMark) {
-		window.redirect = window.redirect+"?redir=1";
-	}
-	//alert(window.redirect);
+      window.redirect = window.settings.defaultredirect;
+    }
 
-  }
-  
-  
-  // adjustments according to current condition
-  function adjust_to_condition() {
+    var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
 
-    // the number of likes a person receives depends on the condition
-	// in addition, the number of likes another person receives is adjusted, so that there is the same number of likes overall
-	switch(condition) {
-		case 1:
-			window.settings.condition_likes = settings.condition_1_likes;
-			window.others.posts[1].likes = settings.condition_1_adjusted_likes;
-			break;
-		case 2:
-			window.settings.condition_likes = settings.condition_2_likes;
-			window.others.posts[1].likes = settings.condition_2_adjusted_likes;
-			break;
-		case 3:
-			window.settings.condition_likes = settings.condition_3_likes;
-			window.others.posts[1].likes = settings.condition_3_adjusted_likes;
-			break;
-	}	
-	  
+    if(!urlHasQuestionMark) {
+      window.redirect = window.redirect+"?redir=1";
+    }
   }
-  
 
   // The variable QueryString contains the url parameters, i.e. condition no. and participant no.
   // via http://stackoverflow.com/a/979995
@@ -416,7 +369,7 @@ $(function() {
       } else {
         query_string[pair[0]].push(pair[1]);
       }
-    } 
+    }
       return query_string;
   } ();
 
@@ -427,28 +380,27 @@ $(function() {
     var letterNumber = /^[0-9a-zA-Z]+$/;
     if(inputtxt.match(letterNumber)) {
         return false;
-      } else { 
-        return true; 
+      } else {
+        return true;
       }
   }
-
 
   // Function to add extra zeros infront of numbers (used for the countdown)
   // via http://stackoverflow.com/a/6466243
   function pad (str, max) {
-    return str.length < max ? pad("0" + str, max) : str;
+      return str.length < max ? pad("0" + str, max) : str;
   }
 
   // Function for encoding and decoding URLs
   // via http://meyerweb.com/eric/tools/dencoder/
   function encode(unencoded) {
-	return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22");	
+    return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22");
   }
   function decode(encoded) {
-	return decodeURIComponent(encoded.replace(/\+/g,  " "));
+    return decodeURIComponent(encoded.replace(/\+/g,  " "));
   }
 
-  
+
   // Simple Countdown
   // via http://davidwalsh.name/jquery-countdown-plugin
   jQuery.fn.countDown = function(settings,to) {
@@ -461,7 +413,7 @@ $(function() {
       callBack: function() { }
     }, settings);
     return this.each(function() {
-      if(!to && to != settings.endNumber) { to = settings.startNumber; }  
+      if(!to && to != settings.endNumber) { to = settings.startNumber; }
       jQuery(this).children('.secs').text(to);
       jQuery(this).animate({
         fontSize: settings.endFontSize
@@ -481,17 +433,15 @@ $(function() {
   };
 
   // Prevent that participants accidentally exit the experiment by disabling F5 and backspace keys
-  shortcut.add("f5",function() {});  
-  $(window).bind('beforeunload', function(){
+  shortcut.add("f5",function() {});
+  $(window).bind('beforeunload', function() {
     return 'Are you sure you want to quit the experiment completely?';
-  });   
+  });
 
-  // Set Settings, get Participant No. and Condition No.
+  // Set Settings
   set_settings();
   get_params();
-  adjust_to_condition();
 
   // Start with the intro slide
   init_intro();
-
 });
