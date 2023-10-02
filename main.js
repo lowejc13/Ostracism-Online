@@ -329,12 +329,12 @@ $(function() {
       $('#timer').text('00:00');
       $('#final-continue').on('click', function() {
         // Redirect link
-        location.href = window.redirect+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change c->b, u ->c, av->d, d->e
+        location.href = window.redirect+'&c='+window.condition+'&u='+encodeURI(window.username)+'&av='+window.avatarexport+'&d='+encodeURI(window.description);  
       });
     },window.settings.tasklength); // timing for task
   }
 
-	// Get URL parameters to set condition number and participant number
+	// Get URL parameters to set condition number
   function get_params() {
     // condition number must be 1, 2, or 3
     if(window.QueryString.c !== undefined && !isNaN(parseInt(window.QueryString.c)) && parseInt(window.QueryString.c) > 0 && parseInt(window.QueryString.c) < 4) {
