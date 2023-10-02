@@ -18,7 +18,7 @@ $(function() {
 	  // After the introduction task is over participants should be redirected to a survey with manipulation checks and dependent measures, to subsequent tasks, or to further instructions.
 	  // If the study is called with a parameter for redirection, as explained in the documentation, this value is overwritten.
 	  // To the redirect link, the following information will be appended: (1) participant number, (2) condition, (3) username, (4) description submitted by participant. These variables can be extracted from the link, saved as data, and used for linking the Social Media Ostracism paradigm to subsequent tasks and measures. See documentation for more details.
-    settings.defaultredirect = 'https://tamu.qualtrics.com/jfe/form/SV_1zf8nQjNCCFJs6a';
+    settings.defaultredirect = 'https://tamu.qualtrics.com/jfe/form/SV_2focCF62amXCLX0';
 
 	  // **Tasklength**
     // Length of the group introduction task in milliseconds. Can be changed to any number (in ms). Default: 180000 (3min)
@@ -178,6 +178,7 @@ $(function() {
   function DeactivateLike() {
 	  setTimeout(function() { 
       $('.btn-like').attr("disabled", true);
+	    alert("This part of the study has now ended. Please return to the survey tab in your browser.");
     }, 2000);
   }
   function DeactivateDisLike(){
@@ -325,37 +326,30 @@ $(function() {
     setTimeout(function() {
 
       $(window).unbind('beforeunload');
-      $('#final-continue').show();
+      //$('#final-continue').show();
       $('#timer').text('00:00');
-      $('#final-continue').on('click', function() {
+      //$('#final-continue').on('click', function() {
         // Redirect link
-        location.href = window.redirect+'&c='+window.condition+'&u='+encodeURI(window.username)+'&av='+window.avatarexport+'&d='+encodeURI(window.description);  
-      });
+        //windows.location.href = https://tamu.qualtrics.com/jfe/form/SV_2focCF62amXCLX0+'&a='+window.participant+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change p->a, c->b, u ->c, av->d, d->e
+      //});
     },window.settings.tasklength); // timing for task
   }
 
-	// Get URL parameters to set condition number
+  // Sets redirect link for string query, MUST ENCODE REDIRECT LINK
   function get_params() {
-    // condition number must be 1, 2, or 3
-    if(window.QueryString.c !== undefined && !isNaN(parseInt(window.QueryString.c)) && parseInt(window.QueryString.c) > 0 && parseInt(window.QueryString.c) < 4) {
-      window.condition = parseInt(window.QueryString.c);
-    } else {
-      window.condition = 1; // condition defaults to 1
-    }    
-    // redirect
     if(window.QueryString.redirect !== undefined && window.QueryString.redirect !== "") {
       window.redirect = decode(window.QueryString.redirect);
     } else {
-	  window.redirect = window.settings.defaultredirect;
-	}
-	
-	var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
-	if(!urlHasQuestionMark) {
-		window.redirect = window.redirect+"?redir=1";
-	}
-	//alert(window.redirect);
+      window.redirect = window.settings.defaultredirect;
+    }
 
+    var urlHasQuestionMark = (window.redirect.indexOf("?") > -1);
+
+    if(!urlHasQuestionMark) {
+      window.redirect = window.redirect+"?redir=1";
+    }
   }
+
   // The variable QueryString contains the url parameters, i.e. condition no. and participant no.
   // via http://stackoverflow.com/a/979995
   window.QueryString = function () {
@@ -447,7 +441,6 @@ $(function() {
   // Set Settings
   set_settings();
   get_params();
-	 adjust_to_condition();
 
   // Start with the intro slide
   init_intro();
