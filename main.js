@@ -329,7 +329,7 @@ $(function() {
       $('#timer').text('00:00');
       $('#final-continue').on('click', function() {
         // Redirect link
-        location.href = window.redirect+'&a='+window.participant+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change p->a, c->b, u ->c, av->d, d->e
+        location.href = window.redirect+'&b='+window.condition+'&c='+encodeURI(window.username)+'&d='+window.avatarexport+'&e='+encodeURI(window.description);  // change c->b, u ->c, av->d, d->e
       });
     },window.settings.tasklength); // timing for task
   }
@@ -341,12 +341,6 @@ $(function() {
       window.condition = parseInt(window.QueryString.c);
     } else {
       window.condition = 1; // condition defaults to 1
-    }
-    // participant number must be numeric
-    if(window.QueryString.p !== undefined && !isNaN(parseInt(window.QueryString.p))) {
-      window.participant = parseInt(window.QueryString.p);
-    } else {
-      window.participant = 0; // participant defaults to 0
     }    
     // redirect
     if(window.QueryString.redirect !== undefined && window.QueryString.redirect !== "") {
@@ -453,6 +447,7 @@ $(function() {
   // Set Settings
   set_settings();
   get_params();
+	 adjust_to_condition();
 
   // Start with the intro slide
   init_intro();
